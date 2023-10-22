@@ -67,17 +67,17 @@ if __name__ == "__main__":
     run_shell_script(shell_script)
 
     # Paths for input and output
-    ahmed_repo = "ahmed/hadith-json"
-    rawdata_path = f"{ahmed_repo}/db/by_book/"
+    rawdata_path = f"ahmed/hadith-json/db/by_book/"
     output_path = "books/"
 
-    all_paths = file_paths = [os.path.join(
-        root, file) for root, _, files in os.walk(rawdata_path) for file in files]
+    paths = [
+        os.path.join(root, file) for root, _, files in os.walk(rawdata_path) for file in files
+    ]
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    for path in all_paths:
+    for path in paths:
         filename = os.path.basename(path)
         print(f"Processing {filename} ...", end=" ")
         data = extract_hadith_data(path)
