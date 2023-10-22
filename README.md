@@ -1,4 +1,4 @@
-# HadithHub
+# hadith-hub
 
 ## Introduction
 
