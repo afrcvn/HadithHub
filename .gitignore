@@ -4,10 +4,11 @@ __pycache__/
 *.pyo
 
 # JSON files in the 'hadiths' directory
-books/*
+output/*
 
 # All files in 'ahmed' directory
 ahmed/*
 
 # for vscode
 .vscode
+.DS_Store
