@@ -1,109 +1,88 @@
 import json
 import os
+import subprocess
 
-def extract_hadith_data(filename: str) -> dict:
+def run_shell_script(script):
     """
-    Extracts Hadith data from a JSON file and structures it into a dictionary.
+    Run a shell script using subprocess.
+
+    Args:
+        script (str): The shell script to execute.
+
+    Returns:
+        None
+    """
+    try:
+        subprocess.run(script, check=True, shell=True, executable='/bin/bash')
+    except subprocess.CalledProcessError as e:
+        print(f"Error running the script: {e}")
+
+def extract_hadith_data(filename):
+    """
+    Extract Hadith data from a JSON file and structure it into a dictionary.
 
     Args:
         filename (str): The filename of the input JSON file.
 
     Returns:
-        dict: A dictionary containing structured Hadith data.
-
-    Example raw data format:
-    {
-        "metadata": {
-            "arabic": {
-                "title": "Book Title",
-                "author": "Author Name",
-                "introduction": "Introduction to the Book"
-            }
-        },
-        "chapters": [
-            {
-                "id": 1,
-                "arabic": "Chapter 1 Title"
-            },
-            {
-                "id": 2,
-                "arabic": "Chapter 2 Title"
-            }
-        ],
-        "hadiths": [
-            {
-                "chapterId": 1,
-                "idInBook": 1,
-                "arabic": "This is the text of Hadith 1 in Chapter 1"
-            },
-            {
-                "chapterId": 1,
-                "idInBook": 2,
-                "arabic": "This is the text of Hadith 2 in Chapter 1"
-            },
-            {
-                "chapterId": 2,
-                "idInBook": 1,
-                "arabic": "This is the text of Hadith 1 in Chapter 2"
-            },
-            {
-                "chapterId": 2,
-                "idInBook": 2,
-                "arabic": "This is the text of Hadith 2 in Chapter 2"
-            }
-        ]
-    }
+        dict: A dictionary containing structured Hadith data or None if an error occurs.
     """
-
-    # Initialize an empty dictionary to store the extracted data
-    outdata = {
-        "title": "",
-        "author": "",
-        "introduction": "",
-        "chapters": []
-    }
-    
-    # Open and read the input JSON file
-    with open(filename + '.json', 'r') as infile:
-        indata = json.load(infile)
-    
-    # Extract metadata information
-    outdata["title"] = indata["metadata"]["arabic"]["title"]
-    outdata["author"] = indata["metadata"]["arabic"]["author"]
-    outdata["introduction"] = indata["metadata"]["arabic"]["introduction"]
-    
-    # Process chapters and their associated Hadiths
-    for chapter in indata["chapters"]:
-        chapter_data = {
-            "title": chapter["arabic"],
-            "hadiths": []
+    try:
+        with open(filename, 'r') as infile:
+            indata = json.load(infile)
+        
+        outdata = {
+            "title": indata["metadata"]["arabic"]["title"],
+            "author": indata["metadata"]["arabic"]["author"],
+            "introduction": indata["metadata"]["arabic"]["introduction"],
+            "chapters": []
         }
-        for hadith in indata["hadiths"]:
-            if hadith["chapterId"] == chapter["id"]:
-                # Append each hadith to the chapter hadiths list
-                chapter_data["hadiths"].append(hadith["arabic"])
-        outdata["chapters"].append(chapter_data)
-    
-    return outdata
+
+        for chapter in indata["chapters"]:
+            chapter_data = {
+                "title": chapter["arabic"],
+                "hadiths": [hadith["arabic"] for hadith in indata["hadiths"] if hadith["chapterId"] == chapter["id"]]
+            }
+            outdata["chapters"].append(chapter_data)
+        
+        return outdata
+    except Exception as e:
+        print(f"Error extracting Hadith data from {filename}: {e}")
+        return None
 
 if __name__ == "__main__":
-    
-    # Paths for input and output
-    input_path = "raw/"
-    output_path = "hadiths/"
-    
-    # Get a list of filenames (without the ".json" extension) in the "raw" folder
-    booknames = [os.path.splitext(filename)[0] for filename in os.listdir(input_path) if filename.endswith(".json")]
+    # Clone the repository, install npm packages, and run the script
+    shell_script = """
+    mkdir ahmed && cd ahmed 
+    git clone https://github.com/A7med3bdulBaset/hadith-json.git
+    cd hadith-json
+    npm install
+    npm run build
+    npm run start 
+    # process not stopping; will fix it when I find a solution
+    """
+    run_shell_script(shell_script)
 
-    # Check if the output directory exists; if not, create it
+    # Paths for input and output
+    ahmed_repo = "ahmed/hadith-json"
+    rawdata_path = f"{ahmed_repo}/db/by_book/"
+    output_path = "hadiths/"
+
+    all_paths = file_paths = [os.path.join(root, file) for root, _, files in os.walk(rawdata_path) for file in files]
+
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    
-    # Process each book and save the extracted data to output JSON files
-    for bookname in booknames:
-        print(f"Processing {bookname} ...", end=" ")
-        data = extract_hadith_data(input_path + bookname)
-        output_filename = bookname + '.json'
+
+    for path in all_paths:
+        filename = os.path.basename(path)
+        print(f"Processing {filename} ...", end=" ")
+        data = extract_hadith_data(path)
+
+        if data:
+            with open(os.path.join(output_path, filename), 'w', encoding='utf-8') as outfile:
+                json.dump(data, outfile, indent=4, ensure_ascii=False)
+        
         print("✓")
-        with open(output_path + output_filename, 'w', encoding='utf-8') as outfile:
-            json.dump(data, outfile, indent=4, ensure_ascii=False)
+
+    # Remove the cloned repository
+    run_shell_script("rm -rf ahmed")

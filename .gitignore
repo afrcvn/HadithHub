@@ -5,3 +5,6 @@ __pycache__/
 
 # JSON files in the 'hadiths' directory
 hadiths/*
+
+# All files in 'ahmed' directory
+ahmed/*
