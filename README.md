@@ -24,8 +24,7 @@ This project is designed to extract Hadith data from JSON files and structure it
 ## Project Structure
 
 - `script.py`: The main Python script for processing Hadith data.
-- `raw/`: Directory containing the raw Hadith data in JSON files sourced from [A7med3bdulBaset's Hadith JSON Repository](https://github.com/A7med3bdulBaset/hadith-json).
-- `hadiths/`: Directory where the processed data will be saved as individual JSON files.
+- `books/`: Directory where the processed data will be saved as individual JSON files.
 
 ## License
 This project is licensed under the MIT License.
