@@ -10,8 +10,8 @@ This project is designed to extract Hadith data from JSON files and structure it
 
 2. **Clone the Repository:**
    ```bash
-   git clone https://github.com/afrcvn/HadithHub.git
-   cd HadithHub
+   git clone https://github.com/afrcvn/hadith-hub.git
+   cd hadith-hub
    ```
 3. **Run the Script:**
    ```bash
