@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # Paths for input and output
     ahmed_repo = "ahmed/hadith-json"
     rawdata_path = f"{ahmed_repo}/db/by_book/"
-    output_path = "hadiths/"
+    output_path = "books/"
 
     all_paths = file_paths = [os.path.join(root, file) for root, _, files in os.walk(rawdata_path) for file in files]
 

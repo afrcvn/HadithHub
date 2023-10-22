@@ -4,7 +4,7 @@ __pycache__/
 *.pyo
 
 # JSON files in the 'hadiths' directory
-hadiths/*
+books/*
 
 # All files in 'ahmed' directory
 ahmed/*
