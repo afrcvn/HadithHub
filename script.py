@@ -78,15 +78,10 @@ def extract_hadith_data(filename: str) -> dict:
             "title": chapter["arabic"],
             "hadiths": []
         }
-        i = 0
         for hadith in indata["hadiths"]:
             if hadith["chapterId"] == chapter["id"]:
-                i += 1
-                # Create a dictionary for each Hadith and append it to the chapter's list
-                chapter_data["hadiths"].append({
-                    "id": i,
-                    "content": hadith["arabic"]
-                })
+                # Append each hadith to the chapter hadiths list
+                chapter_data["hadiths"].append(hadith["arabic"])
         outdata["chapters"].append(chapter_data)
     
     return outdata
@@ -106,8 +101,9 @@ if __name__ == "__main__":
     
     # Process each book and save the extracted data to output JSON files
     for bookname in booknames:
+        print(f"Processing {bookname} ...", end=" ")
         data = extract_hadith_data(input_path + bookname)
         output_filename = bookname + '.json'
-        print(f"Processing {bookname} ✓")
+        print("✓")
         with open(output_path + output_filename, 'w', encoding='utf-8') as outfile:
             json.dump(data, outfile, indent=4, ensure_ascii=False)
