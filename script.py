@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 
+
 def run_shell_script(script):
     """
     Run a shell script using subprocess.
@@ -17,6 +18,7 @@ def run_shell_script(script):
     except subprocess.CalledProcessError as e:
         print(f"Error running the script: {e}")
 
+
 def extract_hadith_data(filename):
     """
     Extract Hadith data from a JSON file and structure it into a dictionary.
@@ -30,7 +32,7 @@ def extract_hadith_data(filename):
     try:
         with open(filename, 'r') as infile:
             indata = json.load(infile)
-        
+
         outdata = {
             "title": indata["metadata"]["arabic"]["title"],
             "author": indata["metadata"]["arabic"]["author"],
@@ -44,11 +46,12 @@ def extract_hadith_data(filename):
                 "hadiths": [hadith["arabic"] for hadith in indata["hadiths"] if hadith["chapterId"] == chapter["id"]]
             }
             outdata["chapters"].append(chapter_data)
-        
+
         return outdata
     except Exception as e:
         print(f"Error extracting Hadith data from {filename}: {e}")
         return None
+
 
 if __name__ == "__main__":
     # Clone the repository, install npm packages, and run the script
@@ -68,7 +71,8 @@ if __name__ == "__main__":
     rawdata_path = f"{ahmed_repo}/db/by_book/"
     output_path = "books/"
 
-    all_paths = file_paths = [os.path.join(root, file) for root, _, files in os.walk(rawdata_path) for file in files]
+    all_paths = file_paths = [os.path.join(
+        root, file) for root, _, files in os.walk(rawdata_path) for file in files]
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -81,7 +85,7 @@ if __name__ == "__main__":
         if data:
             with open(os.path.join(output_path, filename), 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
-        
+
         print("✓")
 
     # Remove the cloned repository

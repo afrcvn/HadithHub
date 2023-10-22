@@ -8,3 +8,6 @@ books/*
 
 # All files in 'ahmed' directory
 ahmed/*
+
+# for vscode
+.vscode
